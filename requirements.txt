@@ -1,4 +1,4 @@
-tensorflow-gpu==1.15.2
+tensorflow-gpu==1.14.0
 keras==2.3.1
 pandas
 prettytable
@@ -6,3 +6,4 @@ opencv-python
 keras-rl
 gym
 pillow
+rl

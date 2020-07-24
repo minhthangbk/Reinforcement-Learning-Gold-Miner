@@ -12,7 +12,7 @@ from prettytable import PrettyTable
 from PIL import ImageFont, ImageDraw, Image
 
 ACTIONS = {0: 'move left', 1: 'move right', 2: 'move up', 3: 'move down', 4: 'stand', 5: 'mining'}
-font = ImageFont.truetype("Data/Roboto-Regular.ttf", 15)
+# font = ImageFont.truetype("../Data/Roboto-Regular.ttf", 15)
 
 class MinerGymEnv(gym.Env):
     def __init__(self, HOST, PORT, debug=False):

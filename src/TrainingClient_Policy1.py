@@ -2,7 +2,8 @@ import sys
 from MinerGymEnv_v1 import MinerGymEnv_v1 as MinerGymEnv
 from Model.DQNModel_Policy1 import DQN_Policy1 as DQN # THANG
 from MinerEnv import MinerEnv # A class of creating a communication environment between the DQN model and the GameMiner environment (GAME_SOCKET_DUMMY.py)
-from Memory import Memory # A class of creating a batch in order to store experiences for the training process
+# from Memory import Memory # A class of creating a batch in order to store experiences for the training process
+from PER import *
 
 # from Model.PER_DQNModel import ReplayBuffer, PrioritizedReplayBuffer
 
@@ -54,6 +55,7 @@ train = False #The variable is used to indicate that the replay starts, and the 
 #Training Process
 #the main part of the deep-q learning agorithm
 for episode_i in range(0, N_EPISODE):
+    decay_step = 0
     try:
         # Choosing a map in the list
         mapID = np.random.randint(1, 6) #Choosing a map ID from 5 maps in Maps folder randomly
@@ -99,8 +101,8 @@ for episode_i in range(0, N_EPISODE):
             if (memory.length > INITIAL_REPLAY_SIZE):
                 #If there are INITIAL_REPLAY_SIZE experiences in the memory batch
                 #then start replaying
-                batch = memory.sample(BATCH_SIZE) #Get a BATCH_SIZE experiences for replaying
-                DQNAgent.replay(batch, BATCH_SIZE)#Do replaying
+                tree_idx, batch = memory.sample(BATCH_SIZE) #Get a BATCH_SIZE experiences for replaying
+                absolute_errors = DQNAgent.replay(batch, BATCH_SIZE)#Do replaying
                 train = True #Indicate the training starts
             total_reward = total_reward + reward #Plus the reward to the total rewad of the episode
             s = s_next #Assign the next state for the next step.
@@ -114,7 +116,7 @@ for episode_i in range(0, N_EPISODE):
             if terminate == True:
                 #If the episode ends, then go to the next episode
                 break
-
+        
         # Iteration to save the network architecture and weights
         if (np.mod(episode_i + 1, SAVE_NETWORK) == 0 and train == True):
             DQNAgent.target_train()  # Replace the learning weights for target model with soft replacement
@@ -131,7 +133,10 @@ for episode_i in range(0, N_EPISODE):
 
         #Decreasing the epsilon if the replay starts
         if train == True:
-            DQNAgent.update_epsilon()
+            memory.batch_update(tree_idx, absolute_errors)
+            DQNAgent.update_epsilon(decay_step)
+            
+        decay_step += 1
 
     except Exception as e:
         import traceback

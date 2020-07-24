@@ -6,7 +6,7 @@ from keras import Input, Model
 from rl.agents import DDPGAgent
 from rl.random import OrnsteinUhlenbeckProcess
 
-sys.path.append('src')
+sys.path.append('../src')
 
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Flatten, Concatenate
@@ -16,7 +16,7 @@ from rl.agents.dqn import DQNAgent
 from rl.policy import BoltzmannQPolicy
 from rl.memory import SequentialMemory
 
-from Config import *
+# from Config import *
 from MinerGymEnv import MinerGymEnv
 
 
@@ -27,17 +27,17 @@ nb_actions = env.action_space.n
 
 
 actor = Sequential()
-actor.add(Flatten(input_shape=(1,209) ))
-actor.add(Dense(400))
+actor.add(Flatten(input_shape=(1,198) ))
+actor.add(Dense(512))
 actor.add(Activation('relu'))
-actor.add(Dense(300))
+actor.add(Dense(256))
 actor.add(Activation('relu'))
 actor.add(Dense(nb_actions))
 actor.add(Activation('tanh'))
 print(actor.summary())
 
 action_input = Input(shape=(nb_actions,), name='action_input')
-observation_input = Input(shape=(1,209) , name='observation_input')
+observation_input = Input(shape=(1,198) , name='observation_input')
 flattened_observation = Flatten()(observation_input)
 x = Dense(400)(flattened_observation)
 x = Activation('relu')(x)

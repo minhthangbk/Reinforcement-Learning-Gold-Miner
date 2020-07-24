@@ -31,7 +31,7 @@ class DQN_Policy1:
             gamma = 0.99, #The discount factor
             epsilon = 1, #Epsilon - the exploration factor
             epsilon_min = 0.01, #The minimum epsilon 
-            epsilon_decay = 0.999,#The decay epislon for each update_epsilon time
+            epsilon_decay = 0.0005,#The decay epislon for each update_epsilon time
             learning_rate = 0.00025, #The learning rate for the DQN network
             tau = 0.125, #The factor for updating the DQN target network from the DQN network
             model = None, #The DQN model
@@ -64,11 +64,11 @@ class DQN_Policy1:
       #Two hidden layers (300,300), their activation is ReLu
       #One output layer with action_space of nodes, activation is linear.
       model = Sequential()
-      model.add(Dense(512, input_dim=self.input_dim))
+      model.add(Dense(512, input_dim=self.input_dim, kernel_initializer='he_uniform'))
       model.add(Activation('relu'))
-      model.add(Dense(512))
+      model.add(Dense(256, kernel_initializer='he_uniform'))
       model.add(Activation('relu'))
-      model.add(Dense(self.action_space))
+      model.add(Dense(self.action_space, kernel_initializer='he_uniform'))
       model.add(Activation('linear'))
       model.summary()
       adam = optimizers.Adam(lr=self.learning_rate)
@@ -117,7 +117,7 @@ class DQN_Policy1:
       inputs = np.zeros((batch_size, self.input_dim))
       targets = np.zeros((batch_size, self.action_space))
       
-      for i in range(0,batch_size):
+      for i in range(batch_size):
         state = samples[0][i,:]
         action = samples[1][i]
         reward = samples[2][i]
@@ -125,14 +125,19 @@ class DQN_Policy1:
         done= samples[4][i]
         
         inputs[i,:] = state
-        targets[i,:] = self.target_model.predict(state.reshape(1,len(state)))        
+        targets[i,:] = self.model.predict(state.reshape(1,len(state)))
+        target_old[i,:]  = np.array(targets)
+        target_next[i,:]  = self.target_model.predict(new_state.reshape(1,len(new_state)))
         if done:
           targets[i,action] = reward # if terminated, only equals reward
         else:
-          Q_future = np.max(self.target_model.predict(new_state.reshape(1,len(new_state))))
+          Q_future = np.max(target_next)
           targets[i,action] = reward + Q_future * self.gamma
+      indices = np.arange(self.batch_size, dtype=np.int32)
+      absolute_errors = np.abs(target_old[indices, np.array(action)]-targets[indices, np.array(action)])
       #Training
-      loss = self.model.train_on_batch(inputs, targets)  
+      loss = self.model.train_on_batch(inputs, targets)
+      return absolute_errors
     
     def target_train(self): 
       weights = self.model.get_weights()
@@ -143,9 +148,10 @@ class DQN_Policy1:
       self.target_model.set_weights(target_weights) 
     
     
-    def update_epsilon(self):
-      self.epsilon =  self.epsilon*self.epsilon_decay
-      self.epsilon =  max(self.epsilon_min, self.epsilon)
+    def update_epsilon(self, decay_step):
+      # self.epsilon =  self.epsilon*self.epsilon_decay
+      # self.epsilon =  max(self.epsilon_min, self.epsilon)
+      self.epsilon = self.epsilon_min + (self.epsilon - self.epsilon_min) * np.exp(-self.epsilon_decay * decay_step)
     
     
     def save_model(self,path, model_name):
