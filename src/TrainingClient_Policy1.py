@@ -74,24 +74,26 @@ for episode_i in range(0, N_EPISODE):
         terminate = False #The variable indicates that the episode ends
         maxStep = minerEnv.state.mapInfo.maxStep #Get the maximum number of steps for each episode in training
         #Start an episde for training
+        remained_energy = minerEnv.get_energy()
         for step in range(0, maxStep):
             # THANG
             # ACTIONS = {0: 'move left', 1: 'move right', 2: 'move up', 3: 'move down', 4: 'stand', 5: 'mining'}
             if minerEnv.check_topleftcorner():
-                action = DQNAgent.act(s,0)
+                action = DQNAgent.act_v1(s,0,remained_energy)
             elif minerEnv.check_toprightcorner():
-                action = DQNAgent.act(s,1)
+                action = DQNAgent.act_v1(s,1,remained_energy)
             elif minerEnv.check_bottomrightcorner():
-                action = DQNAgent.act(s,2)
+                action = DQNAgent.act_v1(s,2,remained_energy)
             elif minerEnv.check_bottomrightcorner():
-                action = DQNAgent.act(s,3)
+                action = DQNAgent.act_v1(s,3,remained_energy)
             else:
-                action = DQNAgent.act(s,4)
+                action = DQNAgent.act_v1(s,4,remained_energy)
 
             # action = DQNAgent.act(s)  # Getting an action from the DQN model from the state (s)
             minerEnv.step(str(action))  # Performing the action in order to obtain the new state
             s_next = minerEnv.get_state()  # Getting a new state
-            reward = minerEnv.get_reward()  # Getting a reward
+            # reward = minerEnv.get_reward()  # Getting a reward
+            reward = minerEnv.get_reward_v1()  # Getting a reward
             terminate = minerEnv.check_terminate()  # Checking the end status of the episode
 
             # Add this transition to the memory batch
