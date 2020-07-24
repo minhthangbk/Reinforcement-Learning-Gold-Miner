@@ -9,7 +9,7 @@ from tensorflow.keras.layers import Dense, Activation
 from tensorflow.keras import optimizers
 from tensorflow.keras import backend as K
 import tensorflow as tf
-from random import random, randrange
+from random import random, randrange, choice
 
 from tensorflow.python.client import device_lib
 print(device_lib.list_local_devices())
@@ -94,13 +94,13 @@ class DQN_Policy1:
       if (random() < self.epsilon):
           # print(ACTION_GO_RIGHT,ACTION_GO_DOWN,ACTION_FREE,ACTION_CRAFT)
           if selectedMovement == 0: #Top left corner
-              a_chosen = randrange(ACTION_GO_RIGHT,ACTION_GO_DOWN,ACTION_FREE,ACTION_CRAFT)  #not move left (0) and up (2)
+              a_chosen = choice([ACTION_GO_RIGHT,ACTION_GO_DOWN,ACTION_FREE,ACTION_CRAFT])  #not move left (0) and up (2)
           elif selectedMovement == 1:  #Top right corner
-              a_chosen = randrange(ACTION_GO_LEFT,ACTION_GO_DOWN,ACTION_FREE,ACTION_CRAFT)  #not move right (0) and up (2)
+              a_chosen = choice([ACTION_GO_LEFT,ACTION_GO_DOWN,ACTION_FREE,ACTION_CRAFT])  #not move right (0) and up (2)
           elif selectedMovement == 2:  #Bottom right corner
-              a_chosen = randrange(ACTION_GO_LEFT,ACTION_GO_UP,ACTION_FREE,ACTION_CRAFT)  #not move right and down
+              a_chosen = choice([ACTION_GO_LEFT,ACTION_GO_UP,ACTION_FREE,ACTION_CRAFT])  #not move right and down
           elif selectedMovement == 3:  #Bottom left corner
-              a_chosen = randrange(ACTION_GO_RIGHT,ACTION_GO_UP,ACTION_FREE,ACTION_CRAFT) #not move left and down
+              a_chosen = choice([ACTION_GO_RIGHT,ACTION_GO_UP,ACTION_FREE,ACTION_CRAFT]) #not move left and down
           else:  #Normal
               a_chosen = randrange(self.action_space)
 
