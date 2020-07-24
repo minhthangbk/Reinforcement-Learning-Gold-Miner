@@ -32,9 +32,9 @@ class DQN_Policy1:
             gamma = 0.99, #The discount factor
             epsilon = 1, #Epsilon - the exploration factor
             epsilon_min = 0.01, #The minimum epsilon 
-            epsilon_decay = 0.0005,#The decay epislon for each update_epsilon time
+            epsilon_decay = 0.999,#The decay epislon for each update_epsilon time
             learning_rate = 0.00025, #The learning rate for the DQN network
-            tau = 0.125, #The factor for updating the DQN target network from the DQN network
+            tau = 0.1, #The factor for updating the DQN target network from the DQN network
             model = None, #The DQN model
             target_model = None, #The DQN target model 
             sess=None
@@ -92,30 +92,30 @@ class DQN_Policy1:
     def act_v1(self,state,selectedMovement,remained_energy):
       #Get the index of the maximum Q values
       a_max = np.argmax(self.model.predict(state.reshape(1,len(state))))
-      if (random.random() < self.epsilon):  # then explore the map
+      if (random() < self.epsilon):  # then explore the map
           if selectedMovement == 0: #Top left corner
               if remained_energy >= MINIMUM_ENERGY:
-                  a_chosen =  random.choice([ACTION_GO_RIGHT,ACTION_GO_DOWN,ACTION_CRAFT])  #not move left (0) and up (2)
+                  a_chosen =  choice([ACTION_GO_RIGHT,ACTION_GO_DOWN,ACTION_CRAFT])  #not move left (0) and up (2)
               else:
                   a_chosen = ACTION_FREE
           elif selectedMovement == 1:  #Top right corner
               if remained_energy >= MINIMUM_ENERGY:
-                  a_chosen = random.choice([ACTION_GO_LEFT,ACTION_GO_DOWN,ACTION_CRAFT])  #not move right (0) and up (2)
+                  a_chosen = choice([ACTION_GO_LEFT,ACTION_GO_DOWN,ACTION_CRAFT])  #not move right (0) and up (2)
               else:
                   a_chosen = ACTION_FREE
           elif selectedMovement == 2:  #Bottom right corner
               if remained_energy >= MINIMUM_ENERGY:
-                  a_chosen = random.choice([ACTION_GO_LEFT,ACTION_GO_UP,ACTION_CRAFT])  #not move right and down
+                  a_chosen = choice([ACTION_GO_LEFT,ACTION_GO_UP,ACTION_CRAFT])  #not move right and down
               else:
                   a_chosen = ACTION_FREE
           elif selectedMovement == 3:  #Bottom left corner
               if remained_energy >= MINIMUM_ENERGY:
-                  a_chosen = random.choice([ACTION_GO_RIGHT,ACTION_GO_UP,ACTION_FREE,ACTION_CRAFT]) #not move left and down
+                  a_chosen = choice([ACTION_GO_RIGHT,ACTION_GO_UP,ACTION_FREE,ACTION_CRAFT]) #not move left and down
               else:
                   a_chosen = ACTION_FREE
           elif selectedMovement == 4:  #Normal
               if remained_energy >= MINIMUM_ENERGY:
-                  a_chosen = random.choice([ACTION_GO_LEFT,ACTION_GO_RIGHT,ACTION_GO_UP,ACTION_GO_DOWN,ACTION_CRAFT])
+                  a_chosen = choice([ACTION_GO_LEFT,ACTION_GO_RIGHT,ACTION_GO_UP,ACTION_GO_DOWN,ACTION_CRAFT])
               else:
                   a_chosen = ACTION_FREE
         # # ACTIONS = {0: 'move left', 1: 'move right', 2: 'move up', 3: 'move down', 4: 'stand', 5: 'mining'}
