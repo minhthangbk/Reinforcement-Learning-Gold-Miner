@@ -13,6 +13,7 @@ from random import random, randrange, choice
 
 from tensorflow.python.client import device_lib
 print(device_lib.list_local_devices())
+
 # THANG
 ACTION_GO_LEFT = 0
 ACTION_GO_RIGHT = 1
