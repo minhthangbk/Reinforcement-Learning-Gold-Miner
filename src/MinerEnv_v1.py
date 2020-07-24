@@ -100,6 +100,7 @@ class MinerEnv_v1:
         # print ("reward",reward)
         return reward
 
+    # THANG
     def get_reward_v1(self):
         # Calculate reward
         reward = 0

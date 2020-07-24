@@ -9,21 +9,23 @@ from tensorflow.keras.layers import Dense, Activation
 from tensorflow.keras import optimizers
 from tensorflow.keras import backend as K
 import tensorflow as tf
-from random import random, randrange
+from numpy import random
+# from random import random, randrange
 
 from tensorflow.python.client import device_lib
 print(device_lib.list_local_devices())
 
+
+# THANG
+ACTION_GO_LEFT = 0
+ACTION_GO_RIGHT = 1
+ACTION_GO_UP = 2
+ACTION_GO_DOWN = 3
+ACTION_FREE = 4
+ACTION_CRAFT = 5
+MINIMUM_ENERGY = 10
 # Deep Q Network off-policy
 class DQN_Policy1:
-
-    # THANG
-    ACTION_GO_LEFT = 0
-    ACTION_GO_RIGHT = 1
-    ACTION_GO_UP = 2
-    ACTION_GO_DOWN = 3
-    ACTION_FREE = 4
-    ACTION_CRAFT = 5
 
     def __init__(
             self,
@@ -89,22 +91,35 @@ class DQN_Policy1:
       return a_chosen
 
     # THANG
-    def act(self,state,selectedMovement):
+    def act_v1(self,state,selectedMovement,remained_energy):
       #Get the index of the maximum Q values
       a_max = np.argmax(self.model.predict(state.reshape(1,len(state))))
-      if (random() < self.epsilon):
-
+      if (random.random() < self.epsilon):  # then explore the map
           if selectedMovement == 0: #Top left corner
-              a_chosen = randrange(ACTION_GO_RIGHT,ACTION_GO_DOWN,ACTION_FREE,ACTION_CRAFT)  #not move left (0) and up (2)
+              if remained_energy >= MINIMUM_ENERGY:
+                  a_chosen =  random.choice([ACTION_GO_RIGHT,ACTION_GO_DOWN,ACTION_CRAFT])  #not move left (0) and up (2)
+              else:
+                  a_chosen = ACTION_FREE
           elif selectedMovement == 1:  #Top right corner
-              a_chosen = randrange(ACTION_GO_LEFT,ACTION_GO_DOWN,ACTION_FREE,ACTION_CRAFTe)  #not move right (0) and up (2)
+              if remained_energy >= MINIMUM_ENERGY:
+                  a_chosen = random.choice([ACTION_GO_LEFT,ACTION_GO_DOWN,ACTION_CRAFT])  #not move right (0) and up (2)
+              else:
+                  a_chosen = ACTION_FREE
           elif selectedMovement == 2:  #Bottom right corner
-              a_chosen = randrange(ACTION_GO_LEFT,ACTION_GO_UP,ACTION_FREE,ACTION_CRAFT)  #not move right and down
+              if remained_energy >= MINIMUM_ENERGY:
+                  a_chosen = random.choice([ACTION_GO_LEFT,ACTION_GO_UP,ACTION_CRAFT])  #not move right and down
+              else:
+                  a_chosen = ACTION_FREE
           elif selectedMovement == 3:  #Bottom left corner
-              a_chosen = randrange(ACTION_GO_RIGHT,ACTION_GO_UP,ACTION_FREE,ACTION_CRAFT) #not move left and down
+              if remained_energy >= MINIMUM_ENERGY:
+                  a_chosen = random.choice([ACTION_GO_RIGHT,ACTION_GO_UP,ACTION_FREE,ACTION_CRAFT]) #not move left and down
+              else:
+                  a_chosen = ACTION_FREE
           elif selectedMovement == 4:  #Normal
-              a_chosen = randrange(self.action_space)
-
+              if remained_energy >= MINIMUM_ENERGY:
+                  a_chosen = random.choice([ACTION_GO_LEFT,ACTION_GO_RIGHT,ACTION_GO_UP,ACTION_GO_DOWN,ACTION_CRAFT])
+              else:
+                  a_chosen = ACTION_FREE
         # # ACTIONS = {0: 'move left', 1: 'move right', 2: 'move up', 3: 'move down', 4: 'stand', 5: 'mining'}
         # # THANG
         # if self.state.mapInfo.gold_amount(self.info.posx, self.info.posy) > 0:

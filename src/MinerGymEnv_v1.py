@@ -138,6 +138,9 @@ class MinerGymEnv_v1(gym.Env):
     def get_reward(self):
         return self.minerEnv.get_reward()
 
+    def get_reward_v1(self):
+        return self.minerEnv.get_reward_v1()
+
     def close(self):
         self.minerEnv.end()
 
@@ -156,3 +159,6 @@ class MinerGymEnv_v1(gym.Env):
 
     def check_bottomrightcorner(self):
         return ((self.state.x == self.state.mapInfo.max_x) and (self.state.y == self.state.mapInfo.max_y))
+
+    def get_energy(self):
+        return self.state.energy
