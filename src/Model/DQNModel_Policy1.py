@@ -14,17 +14,16 @@ from random import random, randrange
 from tensorflow.python.client import device_lib
 print(device_lib.list_local_devices())
 
+# THANG
+ACTION_GO_LEFT = 0
+ACTION_GO_RIGHT = 1
+ACTION_GO_UP = 2
+ACTION_GO_DOWN = 3
+ACTION_FREE = 4
+ACTION_CRAFT = 5
+
 # Deep Q Network off-policy
 class DQN_Policy1:
-
-    # THANG
-    ACTION_GO_LEFT = 0
-    ACTION_GO_RIGHT = 1
-    ACTION_GO_UP = 2
-    ACTION_GO_DOWN = 3
-    ACTION_FREE = 4
-    ACTION_CRAFT = 5
-
     def __init__(
             self,
             input_dim, #The number of inputs for the DQN network
@@ -65,9 +64,9 @@ class DQN_Policy1:
       #Two hidden layers (300,300), their activation is ReLu
       #One output layer with action_space of nodes, activation is linear.
       model = Sequential()
-      model.add(Dense(300, input_dim=self.input_dim))
+      model.add(Dense(512, input_dim=self.input_dim))
       model.add(Activation('relu'))
-      model.add(Dense(300))
+      model.add(Dense(512))
       model.add(Activation('relu'))
       model.add(Dense(self.action_space))
       model.add(Activation('linear'))
@@ -79,21 +78,21 @@ class DQN_Policy1:
       return model
   
     
-    def act(self,state):
-      #Get the index of the maximum Q values
-      a_max = np.argmax(self.model.predict(state.reshape(1,len(state))))
-      if (random() < self.epsilon):
-        a_chosen = randrange(self.action_space)
-      else:
-        a_chosen = a_max
-      return a_chosen
+    # def act(self,state):
+    #   #Get the index of the maximum Q values
+    #   a_max = np.argmax(self.model.predict(state.reshape(1,len(state))))
+    #   if (random() < self.epsilon):
+    #     a_chosen = randrange(self.action_space)
+    #   else:
+    #     a_chosen = a_max
+    #   return a_chosen
 
     # THANG
     def act(self,state,selectedMovement):
       #Get the index of the maximum Q values
       a_max = np.argmax(self.model.predict(state.reshape(1,len(state))))
       if (random() < self.epsilon):
-
+          # print(ACTION_GO_RIGHT,ACTION_GO_DOWN,ACTION_FREE,ACTION_CRAFT)
           if selectedMovement == 0: #Top left corner
               a_chosen = randrange(ACTION_GO_RIGHT,ACTION_GO_DOWN,ACTION_FREE,ACTION_CRAFT)  #not move left (0) and up (2)
           elif selectedMovement == 1:  #Top right corner
