@@ -97,12 +97,12 @@ class DQN_Policy1:
           if selectedMovement == 0: #Top left corner
               a_chosen = randrange(ACTION_GO_RIGHT,ACTION_GO_DOWN,ACTION_FREE,ACTION_CRAFT)  #not move left (0) and up (2)
           elif selectedMovement == 1:  #Top right corner
-              a_chosen = randrange(ACTION_GO_LEFT,ACTION_GO_DOWN,ACTION_FREE,ACTION_CRAFTe)  #not move right (0) and up (2)
+              a_chosen = randrange(ACTION_GO_LEFT,ACTION_GO_DOWN,ACTION_FREE,ACTION_CRAFT)  #not move right (0) and up (2)
           elif selectedMovement == 2:  #Bottom right corner
               a_chosen = randrange(ACTION_GO_LEFT,ACTION_GO_UP,ACTION_FREE,ACTION_CRAFT)  #not move right and down
           elif selectedMovement == 3:  #Bottom left corner
               a_chosen = randrange(ACTION_GO_RIGHT,ACTION_GO_UP,ACTION_FREE,ACTION_CRAFT) #not move left and down
-          elif selectedMovement == 4:  #Normal
+          else:  #Normal
               a_chosen = randrange(self.action_space)
 
         # # ACTIONS = {0: 'move left', 1: 'move right', 2: 'move up', 3: 'move down', 4: 'stand', 5: 'mining'}
